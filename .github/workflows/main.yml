@@ -1,39 +1,30 @@
-# This is a basic workflow to help you get started with Actions
 
 name: CI
 
-# Controls when the action will run. 
 on:
-  # Triggers the workflow on push or pull request events but only for the master branch
   push:
     branches: [ master ]
   pull_request:
     branches: [ master ]
 
-  # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
 
-# A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
   lint:
-    # The type of runner that the job will run on
     runs-on: ubuntu-latest
-
-    # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
       - name: Checkout the code
-      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
         uses: actions/checkout@v2
 
       - name: Run Lint check
-        run: echo lint check
-#        run: ./gradlew lintDebug
-#
-#      - name: Upload html test report
-#        uses: actions/checkout@v2
-#        with:
-#          name: index.html
-#          path: app/build/reports/lint-results-debug.html
+        run: ./gradlew lintDebug
+
+      - name: Upload html test report
+        uses: actions/checkout@v2
+        with:
+          name: index.html
+          path: app/build/reports/lint-results-debug.html
+
   unit-test:
     needs: [lint]
     runs-on: ubuntu-latest
@@ -42,14 +33,13 @@ jobs:
         uses: actions/checkout@v2
 
       - name: Run Unit tests
-        run: echo Run unit tests
-#        run: ./gradlew test
-#
-#      - name: Upload the test report
-#        uses: actions/upload-artifact@v2
-#        with:
-#          name: unit_test_report
-#          path: app/build/reports/tests/testDebugUnitTest/
+        run: ./gradlew test
+
+      - name: Upload the test report
+        uses: actions/upload-artifact@v2
+        with:
+          name: unit_test_report
+          path: app/build/reports/tests/testDebugUnitTest/
 
   instrumentation-test:
     needs: [unit-test]
@@ -58,23 +48,22 @@ jobs:
       - name: Checkout the code
         uses: actions/checkout@v2
 
-#      - name: set up JDK 11
-#        uses: actions/setup-java@v1
-#        with:
-#          java-version: 11
+      - name: set up JDK 11
+        uses: actions/setup-java@v1
+        with:
+          java-version: 11
 
       - name: Run Instrumentation tests
-        run: echo Run instrumentation tests
-#        uses: reactivecircus/android-emulator-runner@v2
-#        with:
-#          api-level: 29
-#          script: ./gradlew connectedCheck
-#
-#      - name: Upload test report
-#        uses: actions/upload-artifact@v2
-#        with:
-#          name: instrumentation_test_report
-#          path: app/build/reports/androidTests/connected/
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: 29
+          script: ./gradlew connectedCheck
+
+      - name: Upload test report
+        uses: actions/upload-artifact@v2
+        with:
+          name: instrumentation_test_report
+          path: app/build/reports/androidTests/connected/
 
 
   static-code-analysis:
@@ -84,16 +73,13 @@ jobs:
       - name: Checkout the code
         uses: actions/checkout@v2
 
-#      - name: set up JDK 11
-#        uses: actions/setup-java@v1
-#        with:
-#          java-version: 11
+      - name: set up JDK 11
+        uses: actions/setup-java@v1
+        with:
+          java-version: 11
 
       - name: SonarCloud Scan
-        run: echo Run Sonar Scan
-#        run: ./gradlew app:sonarqube -Dsonar.login=${{ secrets.SONAR_TOKEN }}
-#        env:
-#          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: ./gradlew app:sonarqube -Dsonar.login=${{ secrets.SONAR_TOKEN }}
 
   package-apk:
     needs: [static-code-analysis]
