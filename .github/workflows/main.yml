@@ -116,7 +116,7 @@ jobs:
       - name: Upload to app center
         uses: wzieba/AppCenter-Github-Action@v1
         with:
-          appName: namnpse/CICDGithubAction
+          appName: nam444479-9981/CICDGithubAction
           token: ${{ secrets.APP_CENTER_TOKEN }}
           group: AlphaTesters
           file: app-debug.apk
